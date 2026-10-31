@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EduLibrary — Local Academic Markdown CMS</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%231e3a8a'><path d='M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z'/><path d='M6 6h10'/><path d='M6 10h10'/></svg>">
+</head>
+<body>
+  <div id="app-root">
+    <!-- Header & Navigation -->
+    <header class="app-header">
+      <div class="brand-section" id="btn-brand-home" title="Go to Dashboard">
+        <div class="brand-logo-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"></path>
+            <path d="M6 6h10"></path>
+            <path d="M6 10h10"></path>
+          </svg>
+        </div>
+        <div class="brand-title">EduLibrary</div>
+        <span class="brand-badge">Local CMS</span>
+      </div>
+
+      <!-- Search System with Debounce & Dropdown -->
+      <div class="header-search-container">
+        <div class="search-input-wrapper">
+          <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input type="text" id="global-search-input" class="search-input" placeholder="Search notes, formulas, Bengali text... (Ctrl+K)" autocomplete="off">
+          <button id="search-clear-btn" class="search-clear-btn" title="Clear search">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+        <div id="search-results-dropdown" class="search-results-dropdown"></div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="header-actions">
+        <button id="btn-header-new-note" class="btn btn-primary" title="Create a new Markdown note">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          <span>New Note</span>
+        </button>
+
+        <button id="btn-header-upload" class="btn btn-secondary" title="Upload Markdown file">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="17 8 12 3 7 8"></polyline>
+            <line x1="12" y1="3" x2="12" y2="15"></line>
+          </svg>
+          <span>Upload</span>
+        </button>
+
+        <a id="btn-header-backup" href="/api/backup" download class="btn btn-outline" title="Download entire content library as a ZIP archive">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+            <polyline points="7.5 4.21 12 6.81 16.5 4.21"></polyline>
+            <polyline points="7.5 19.79 7.5 14.6 3 12"></polyline>
+            <polyline points="21 12 16.5 14.6 16.5 19.79"></polyline>
+            <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+            <line x1="12" y1="22.08" x2="12" y2="12"></line>
+          </svg>
+          <span>Backup ZIP</span>
+        </a>
+
+        <button id="theme-toggle-btn" class="btn btn-icon" title="Toggle Light / Dark Academic Theme">
+          <svg id="theme-icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+          <svg id="theme-icon-moon" style="display:none;" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Viewport Switcher -->
+    <main class="app-viewport">
+      <!-- VIEW 1: Dashboard -->
+      <section id="view-dashboard" class="view-container active dashboard-view">
+        <div class="dashboard-hero">
+          <div class="hero-text">
+            <h1>Academic Knowledge Repository</h1>
+            <p>Structured curriculum notes for Classes 5 to 10 in Mathematics and Physical Science with bilingual Bengali support.</p>
+          </div>
+          <div class="hero-actions">
+            <button id="btn-hero-explore" class="btn btn-secondary">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="8" y1="6" x2="21" y2="6"></line>
+                <line x1="8" y1="12" x2="21" y2="12"></line>
+                <line x1="8" y1="18" x2="21" y2="18"></line>
+                <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                <line x1="3" y1="18" x2="3.01" y2="18"></line>
+              </svg>
+              <span>Explore Curriculum</span>
+            </button>
+            <button id="btn-hero-new" class="btn btn-primary">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+              <span>Create Note</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Metric Cards -->
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <div class="metric-icon-box metric-blue">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+              </svg>
+            </div>
+            <div class="metric-content">
+              <div class="metric-label">Total Notes</div>
+              <div class="metric-value" id="stat-total-notes">0</div>
+            </div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-icon-box metric-green">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+              </svg>
+            </div>
+            <div class="metric-content">
+              <div class="metric-label">Curriculum Classes</div>
+              <div class="metric-value" id="stat-classes-count">6 Classes</div>
+            </div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-icon-box metric-amber">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+              </svg>
+            </div>
+            <div class="metric-content">
+              <div class="metric-label">Library Storage</div>
+              <div class="metric-value" id="stat-storage-size">0 KB</div>
+            </div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-icon-box metric-purple">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+              </svg>
+            </div>
+            <div class="metric-content">
+              <div class="metric-label">System State</div>
+              <div class="metric-value" id="stat-system-state">Online</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Class Cards Grid -->
+        <div class="section-heading">
+          <h2>Classes &amp; Subjects</h2>
+        </div>
+        <div class="classes-cards-grid" id="dashboard-classes-grid">
+          <!-- Dynamically populated -->
+        </div>
+
+        <!-- Recent Notes Section -->
+        <div class="section-heading">
+          <h2>Recently Modified Notes</h2>
+        </div>
+        <div class="recent-notes-card">
+          <table class="notes-table">
+            <thead>
+              <tr>
+                <th>Title / File</th>
+                <th>Class</th>
+                <th>Subject</th>
+                <th>Size</th>
+                <th>Last Modified</th>
+                <th style="text-align: right;">Action</th>
+              </tr>
+            </thead>
+            <tbody id="dashboard-recent-notes-tbody">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- VIEW 2: Explorer Split Pane -->
+      <section id="view-explorer" class="view-container explorer-view">
+        <aside class="explorer-sidebar">
+          <div class="sidebar-header">
+            <h3>Curriculum Tree</h3>
+            <button id="btn-sidebar-refresh" class="btn btn-sm btn-outline" title="Refresh Notes">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="23 4 23 10 17 10"></polyline>
+                <polyline points="1 20 1 14 7 14"></polyline>
+                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+              </svg>
+            </button>
+          </div>
+          <div class="sidebar-nav-tree" id="sidebar-classes-tree">
+            <!-- Dynamically populated -->
+          </div>
+        </aside>
+
+        <section class="explorer-main">
+          <div class="explorer-toolbar">
+            <div class="explorer-breadcrumbs" id="explorer-breadcrumbs">
+              <span>All Classes</span>
+            </div>
+            <div class="explorer-controls">
+              <label for="sort-select" style="font-size: 0.8rem; color: var(--text-muted);">Sort by:</label>
+              <select id="sort-select" class="sort-select">
+                <option value="mtime:desc">Modified (Newest first)</option>
+                <option value="mtime:asc">Modified (Oldest first)</option>
+                <option value="name:asc">Name (A → Z)</option>
+                <option value="name:desc">Name (Z → A)</option>
+                <option value="size:desc">Size (Largest first)</option>
+                <option value="size:asc">Size (Smallest first)</option>
+              </select>
+              <button id="btn-explorer-new-note" class="btn btn-sm btn-primary">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                <span>New Note</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="explorer-notes-list" id="explorer-notes-list">
+            <!-- Dynamically populated cards or empty state -->
+          </div>
+        </section>
+      </section>
+
+      <!-- VIEW 3: Reader & Editor Mode -->
+      <section id="view-editor-reader" class="view-container editor-reader-view">
+        <div class="reader-toolbar">
+          <div class="reader-toolbar-left">
+            <button id="btn-back-to-explorer" class="btn btn-sm btn-secondary" title="Back to Notes Explorer">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+              </svg>
+              <span>Back</span>
+            </button>
+            <div class="active-note-path" id="reader-note-breadcrumb">
+              <span id="reader-path-text">Loading...</span>
+              <span id="unsaved-indicator" class="dirty-indicator" title="Unsaved changes"></span>
+            </div>
+          </div>
+
+          <div class="reader-toolbar-right">
+            <!-- View Mode Switcher -->
+            <div class="view-mode-tabs">
+              <button id="btn-mode-reader" class="mode-tab-btn active" title="Reader Only Mode">Reader</button>
+              <button id="btn-mode-split" class="mode-tab-btn" title="Side-by-side Editor & Live Preview">Split</button>
+              <button id="btn-mode-editor" class="mode-tab-btn" title="Editor Only Mode">Editor</button>
+            </div>
+
+            <!-- Note Actions -->
+            <button id="btn-save-note" class="btn btn-sm btn-primary" title="Save changes (Ctrl+S)">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                <polyline points="7 3 7 8 15 8"></polyline>
+              </svg>
+              <span>Save (Ctrl+S)</span>
+            </button>
+
+            <button id="btn-rename-note" class="btn btn-sm btn-outline" title="Rename Note">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+              </svg>
+              <span>Rename</span>
+            </button>
+
+            <button id="btn-print-note" class="btn btn-sm btn-outline" title="Print or Save to PDF">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                <rect x="6" y="14" width="12" height="8"></rect>
+              </svg>
+              <span>Print</span>
+            </button>
+
+            <button id="btn-delete-note" class="btn btn-sm btn-danger" title="Delete Note">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="3 6 5 6 21 6"></polyline>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Panels Container -->
+        <div id="workspace-panels" class="workspace-panels-container mode-reader-only">
+          <!-- Left: Editor Pane -->
+          <div class="editor-pane">
+            <textarea id="markdown-editor" class="editor-textarea" spellcheck="false" placeholder="Write academic Markdown here..."></textarea>
+            <div class="editor-statusbar">
+              <div id="editor-char-counter">Chars: 0 | Words: 0</div>
+              <div id="editor-cursor-pos">Ln 1, Col 1</div>
+            </div>
+          </div>
+
+          <!-- Right: Rendered Academic Reader Pane -->
+          <div class="reader-pane" id="reader-pane">
+            <article class="markdown-academic-article" id="rendered-markdown-content">
+              <!-- Rendered via Marked & DOMPurify -->
+            </article>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- MODAL: New Note -->
+    <div id="modal-new-note" class="modal-backdrop">
+      <div class="modal-box">
+        <div class="modal-header">
+          <h3>Create New Note</h3>
+          <button class="modal-close-btn" data-close-modal="modal-new-note">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+        <form id="form-new-note">
+          <div class="modal-body">
+            <div class="form-group">
+              <label class="form-label" for="new-note-class">Target Class</label>
+              <select id="new-note-class" class="form-select" required>
+                <option value="class-5">Class 5 (পঞ্চম শ্রেণি)</option>
+                <option value="class-6">Class 6 (ষষ্ঠ শ্রেণি)</option>
+                <option value="class-7">Class 7 (সপ্তম শ্রেণি)</option>
+                <option value="class-8" selected>Class 8 (অষ্টম শ্রেণি)</option>
+                <option value="class-9">Class 9 (নবম শ্রেণি)</option>
+                <option value="class-10">Class 10 (দশম শ্রেণি)</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="new-note-subject">Subject</label>
+              <select id="new-note-subject" class="form-select" required>
+                <option value="mathematics">Mathematics (গণিত)</option>
+                <option value="physical-science">Physical Science (ভৌত বিজ্ঞান)</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="new-note-filename">Filename (English or বাংলা)</label>
+              <input type="text" id="new-note-filename" class="form-input" placeholder="e.g. algebra-basics.md or বীজগণিত.md" required>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="new-note-template">Initial Template</label>
+              <select id="new-note-template" class="form-select">
+                <option value="blank">Blank Note</option>
+                <option value="academic">Academic Lesson Plan (English)</option>
+                <option value="bengali">Academic Lesson Plan (বাংলা)</option>
+              </select>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-close-modal="modal-new-note">Cancel</button>
+            <button type="submit" class="btn btn-primary">Create Note</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- MODAL: Upload Note -->
+    <div id="modal-upload-note" class="modal-backdrop">
+      <div class="modal-box">
+        <div class="modal-header">
+          <h3>Upload Markdown Note</h3>
+          <button class="modal-close-btn" data-close-modal="modal-upload-note">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+        <form id="form-upload-note">
+          <div class="modal-body">
+            <div class="form-group">
+              <label class="form-label" for="upload-note-class">Target Class</label>
+              <select id="upload-note-class" class="form-select" required>
+                <option value="class-5">Class 5 (পঞ্চম শ্রেণি)</option>
+                <option value="class-6">Class 6 (ষষ্ঠ শ্রেণি)</option>
+                <option value="class-7">Class 7 (সপ্তম শ্রেণি)</option>
+                <option value="class-8" selected>Class 8 (অষ্টম শ্রেণি)</option>
+                <option value="class-9">Class 9 (নবম শ্রেণি)</option>
+                <option value="class-10">Class 10 (দশম শ্রেণি)</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="upload-note-subject">Subject</label>
+              <select id="upload-note-subject" class="form-select" required>
+                <option value="mathematics">Mathematics (গণিত)</option>
+                <option value="physical-science">Physical Science (ভৌত বিজ্ঞান)</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Select Markdown File (.md, .markdown)</label>
+              <div class="upload-drop-zone" id="upload-drop-zone">
+                <div class="upload-icon">
+                  <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="17 8 12 3 7 8"></polyline>
+                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                  </svg>
+                </div>
+                <div style="font-weight: 600; margin-bottom: 4px;" id="upload-file-label">Click or Drag &amp; Drop Markdown file here</div>
+                <div style="font-size: 0.78rem; color: var(--text-muted);">Max size: 10MB • Preserves Bengali script &amp; UTF-8</div>
+                <input type="file" id="upload-file-input" accept=".md,.markdown" style="display: none;" required>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-close-modal="modal-upload-note">Cancel</button>
+            <button type="submit" id="btn-submit-upload" class="btn btn-primary">Upload Note</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- MODAL: Rename Note -->
+    <div id="modal-rename-note" class="modal-backdrop">
+      <div class="modal-box">
+        <div class="modal-header">
+          <h3>Rename Note</h3>
+          <button class="modal-close-btn" data-close-modal="modal-rename-note">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+        <form id="form-rename-note">
+          <div class="modal-body">
+            <div class="form-group">
+              <label class="form-label" for="rename-input-filename">New Filename</label>
+              <input type="text" id="rename-input-filename" class="form-input" required>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-close-modal="modal-rename-note">Cancel</button>
+            <button type="submit" class="btn btn-primary">Save New Name</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- MODAL: Delete Confirmation -->
+    <div id="modal-delete-confirm" class="modal-backdrop">
+      <div class="modal-box" style="max-width: 440px;">
+        <div class="modal-header">
+          <h3>Delete Note Permanently</h3>
+          <button class="modal-close-btn" data-close-modal="modal-delete-confirm">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p style="color: var(--text-secondary);" id="delete-confirm-message">Are you sure you want to permanently delete this note? This action cannot be undone.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-close-modal="modal-delete-confirm">Cancel</button>
+          <button type="button" id="btn-confirm-delete-action" class="btn btn-danger">Delete Note</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="toast-container"></div>
+  </div>
+
+  <!-- Zero-CDN Offline Scripts -->
+  <script src="vendor/marked.min.js"></script>
+  <script src="vendor/purify.min.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/markdown.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
